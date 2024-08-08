@@ -1,65 +1,85 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.*;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+/**
+ *Esta es la interfaz para poder logearse
+ * @author Angelo Loor
+ * @version 2023 B
+ */
 public class Login extends JFrame {
-
-
-    private JPanel panel1;
+    private JTextField usernameField;
+    private JPasswordField passwordField;
     private JButton loginButton;
-    private JPasswordField contratxt;
-    private JTextField usuariotxt;
-
+    private JLabel messageLabel;
 
     public Login() {
-
-        setTitle("Login del sistema");
-        setContentPane(panel1);
+        setTitle("Login");
+        setSize(300, 150);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300, 300);
-        setPreferredSize(new Dimension(300,300));
-        setMinimumSize(new Dimension(300,300));
-        pack();
         setLocationRelativeTo(null);
-        setVisible(true);
+
+        JPanel panel = new JPanel();
+        add(panel);
+        placeComponents(panel);
 
         loginButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
-
-                String url="jdbc:mysql://localhost:3306/ AutoPartsXpress";
-                String user="root";
-                String password="123456";
-
-                try (Connection connection= DriverManager.getConnection(url,user,password)){
-
-                    String query="select * from USUARIO where username= '"+ usuariotxt.getText()+"' and password = '"+contratxt.getText()+"'";
-                    Statement statement=connection.createStatement();
-                    ResultSet resultSet=statement.executeQuery(query);
-
-                    if (resultSet.next()){
-
-                        if(resultSet.getString("username").equals(usuariotxt.getText()) && resultSet.getString("password").equals(contratxt.getText())){
-                            JOptionPane.showMessageDialog(null, "ACCESO CONCEDIDO");
-                            new paginaPrincipal();
-                            setVisible(false);
-                        }
-
-
-                    }else{
-                        JOptionPane.showMessageDialog(null, "ACCESO DENEGADO");
-
+                try {
+                    if (authenticateUser(usernameField.getText(), new String(passwordField.getPassword()))) {
+                        messageLabel.setText("Login successful!");
+                        new MainFrame().setVisible(true);
+                    } else {
+                        messageLabel.setText("Invalid username or password.");
                     }
-
-                } catch (SQLException e1) {
-                    System.out.println(e1);
+                } catch (SQLException ex) {
+                    messageLabel.setText("Database error.");
+                    ex.printStackTrace();
                 }
-
             }
         });
-
-
     }
+
+    private void placeComponents(JPanel panel) {
+        panel.setLayout(null);
+
+        JLabel userLabel = new JLabel("Username:");
+        userLabel.setBounds(10, 20, 80, 25);
+        panel.add(userLabel);
+
+        usernameField = new JTextField(20);
+        usernameField.setBounds(100, 20, 160, 25);
+        panel.add(usernameField);
+
+        JLabel passwordLabel = new JLabel("Password:");
+        passwordLabel.setBounds(10, 50, 80, 25);
+        panel.add(passwordLabel);
+
+        passwordField = new JPasswordField(20);
+        passwordField.setBounds(100, 50, 160, 25);
+        panel.add(passwordField);
+
+        loginButton = new JButton("Login");
+        loginButton.setBounds(10, 80, 80, 25);
+        panel.add(loginButton);
+
+        messageLabel = new JLabel("");
+        messageLabel.setBounds(100, 80, 200, 25);
+        panel.add(messageLabel);
+    }
+
+    private boolean authenticateUser(String username, String password) throws SQLException {
+        Connection conn = DatabaseConnection.getConnection();
+        String query = "SELECT * FROM USUARIO WHERE username = ? AND password = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, username);
+        preparedStatement.setString(2, password);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        return resultSet.next();
+    }
+
 }
+

@@ -1,13 +1,25 @@
+/**
+ *Esta es la clase producto
+ * @author Angelo Loor
+ * @version 2023 B
+ */
 public class Producto {
     private int id;
-    private String name;
-    private String description;
-    private double price;
+    private String nombre;
+    private String descripcion;
+    private double precio;
     private int stock;
     private int categoriaId;
-    private String imagePath;
 
-    // Getters y Setters
+    public Producto(int id, String nombre, String descripcion, double precio, int stock, int categoriaId) {
+        this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.stock = stock;
+        this.categoriaId = categoriaId;
+    }
+
     public int getId() {
         return id;
     }
@@ -16,28 +28,28 @@ public class Producto {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-    public double getPrice() {
-        return price;
+    public double getPrecio() {
+        return precio;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setPrecio(double precio) {
+        this.precio = precio;
     }
 
     public int getStock() {
@@ -55,13 +67,4 @@ public class Producto {
     public void setCategoriaId(int categoriaId) {
         this.categoriaId = categoriaId;
     }
-
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
 }
-
